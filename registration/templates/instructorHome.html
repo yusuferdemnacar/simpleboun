@@ -22,20 +22,32 @@
 </head>
 <body>
     <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
-        <h1>Student Homepage</h1>
+        <h1>Manager Homepage</h1>
 		<h3>{{username}}</h3>
     </div>
 	<div style="background-color:lavender" class="container-fluid">
 		<br>
 		<div class="row">
 			<div class="col-lg-4 text-center">
-				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View All Courses</a>
-			</div>
-			<div class="col-lg-4 text-center">
-				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View My Courses</a>
+				<a href="{%url 'managerHome/addStudentPage' %}" class="btn btn-primary" role="button">View My Courses</a>
 			</div>
 			<div class="col-lg-4 text-center">
 				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Add Course</a>
+			</div>
+			<div class="col-lg-4 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View My Students</a>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-lg-4 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Classrooms</a>
+			</div>
+			<div class="col-lg-4 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Edit Course</a>
+			</div>
+			<div class="col-lg-4 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Grade Student</a>
 			</div>
 		</div>
 		<br>
