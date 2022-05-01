@@ -234,6 +234,22 @@ def viewStudentsPage(req):
     connection.commit()
     
     return render(req, "viewStudents.html", {"results":result})
+    
+# View all grades of a student
+
+def viewGradesPage(req):
+
+    student_id=req.GET.get("student_id", 0)
+    print(student_id)
+    
+    result=[]
+
+    if student_id:
+        cursor.execute(f"SELECT G.course_id, name, grade FROM Grade G INNER JOIN Course C ON (G.course_id = C.course_id) WHERE student_id = '{student_id}'")
+        result=cursor.fetchall()
+        connection.commit()
+    
+    return render(req, "viewGrades.html", {"results":result, "student_id":student_id})
 
 def toy(req):
     return render(req, "toy.html")
