@@ -132,11 +132,29 @@ def addStudent(req):
     
 def addInstructorPage(req):
 
-    return render(req, "toy.html")
+    state=req.GET.get("state", "begin")
+    username=req.session["username"]
+
+    return render(req, "addInstructor.html", {"state":state, "username":username})
     
 def addInstructor(req):
 
-    pass
+    logged_user=req.session["username"]
+    username=req.POST["username"]
+    password=req.POST["password"]
+    title=req.POST["title"]
+    name=req.POST["name"]
+    surname=req.POST["surname"]
+    email=req.POST["email"]
+    department_id=req.POST["department_id"]
+    
+    try:
+        run_statement(f"insert into Instructor values('{username}','{department_id}','{title}','{password}','{name}','{surname}','{email}')")
+        run_statement(f"insert into Lecturer_at values('{username}','{department_id}')")
+        return HttpResponseRedirect("../managerHome/addInstructorPage?state=success")
+    except Exception as e:
+        print(str(e))
+        return HttpResponseRedirect('../managerHome/addInstructorPage?state=fail')
 
 def deleteStudentPage(req):
 
