@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  	<title>Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        table, th, td {
+            border: 1px solid;
+        }
+        .center {
+            margin-left: auto;
+            margin-right: auto;
+            justify-content: center;
+        }
+        form { 
+            margin: 0 auto; 
+            width:250px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+            <h2> Welcome back {{username}}.</h2>
+    </div>
+	<div style="background-color:lavender" class="container-fluid">
+		<br>
+		<div class="row">
+			<div class="col-lg-6 text-center">
+				<a href="{%url 'managerHome/addStudentPage' %}" class="btn btn-primary" role="button">Add Student</a>
+			</div>
+			<div class="col-lg-6 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Add Instructor</a>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-lg-6 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Delete Student</a>
+			</div>
+			<div class="col-lg-6 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Update Title</a>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-lg-6 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Students</a>
+			</div>
+			<div class="col-lg-6 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Grades of a Student</a>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-lg-6 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Courses of an Instructor</a>
+			</div>
+			<div class="col-lg-6 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Average Grade of a Course</a>
+			</div>
+		</div>
+	</div>
+	<div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+		<a href="{%url 'index' %}" class="btn btn-primary" role="button">Logout</a>
+    </div>
+</body>
+</html>
