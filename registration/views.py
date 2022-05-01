@@ -2,6 +2,21 @@ from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
 from .forms import *
 from .db_utils import run_statement
+import mysql.connector
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
+
+connection = mysql.connector.connect(
+  host=env("MYSQL_HOST"),
+  user=env("MYSQL_USER"),
+  password=env("MYSQL_PASSWORD"),
+  database=env("MYSQL_DATABASE"),
+  auth_plugin='mysql_native_password'
+)
+
+cursor=connection.cursor()
 
 #First page
 
@@ -45,7 +60,11 @@ def managerLogin(req):
     username=req.POST["username"]
     password=req.POST["password"]
 
-    result=run_statement(f"SELECT * FROM Database_manager WHERE username='{username}' and password='{password}';") #Run the query in DB
+    cursor.execute(f"SELECT * FROM Database_manager WHERE username='{username}' and password='{password}';") #Run the query in DB
+
+    connection.commit()
+
+    result=cursor.fetchall()
 
     if result: #If a result is retrieved
         req.session["username"]=username #Record username into the current session
@@ -59,7 +78,11 @@ def studentLogin(req):
     username=req.POST["username"]
     password=req.POST["password"]
 
-    result=run_statement(f"SELECT * FROM Student WHERE username='{username}' and password='{password}';") #Run the query in DB
+    cursor.execute(f"SELECT * FROM Student WHERE username='{username}' and password='{password}';") #Run the query in DB
+
+    connection.commit()
+
+    result=cursor.fetchall()
 
     if result: #If a result is retrieved
         req.session["username"]=username #Record username into the current session
@@ -72,8 +95,12 @@ def instructorLogin(req):
     #Retrieve data from the request body
     username=req.POST["username"]
     password=req.POST["password"]
+    
+    cursor.execute(f"SELECT * FROM Instructor WHERE username='{username}' and password='{password}';") #Run the query in DB
 
-    result=run_statement(f"SELECT * FROM Instructor WHERE username='{username}' and password='{password}';") #Run the query in DB
+    connection.commit()
+
+    result=cursor.fetchall()
 
     if result: #If a result is retrieved
         req.session["username"]=username #Record username into the current session
@@ -122,13 +149,13 @@ def addStudent(req):
     department_id=req.POST["department_id"]
     
     try:
-        run_statement(f"INSERT INTO Student VALUES('{username}', {student_id}, '{department_id}', '{password}', '{name}', '{surname}', '{email}')")
+        cursor.execute(f"INSERT INTO Student VALUES('{username}', {student_id}, '{department_id}', '{password}', '{name}', '{surname}', '{email}')")
+        connection.commit()
+        result=cursor.fetchall()
         return HttpResponseRedirect("../managerHome/addStudentPage?state=success")
     except Exception as e:
         print(str(e))
         return HttpResponseRedirect('../managerHome/addStudentPage?state=fail')
-
-    pass
     
 def addInstructorPage(req):
 
@@ -149,8 +176,12 @@ def addInstructor(req):
     department_id=req.POST["department_id"]
     
     try:
-        run_statement(f"insert into Instructor values('{username}','{department_id}','{title}','{password}','{name}','{surname}','{email}')")
-        run_statement(f"insert into Lecturer_at values('{username}','{department_id}')")
+        cursor.execute(f"insert into Instructor values('{username}','{department_id}','{title}','{password}','{name}','{surname}','{email}')")
+        connection.commit()
+        result=cursor.fetchall()
+        cursor.execute(f"insert into Lecturer_at values('{username}','{department_id}')")
+        connection.commit()
+        result=cursor.fetchall()
         return HttpResponseRedirect("../managerHome/addInstructorPage?state=success")
     except Exception as e:
         print(str(e))
@@ -158,11 +189,24 @@ def addInstructor(req):
 
 def deleteStudentPage(req):
 
-    return render(req, "toy.html")
+    state=req.GET.get("state", "begin")
+    username=req.session["username"]
+
+    return render(req, "deleteStudent.html", {"state":state, "username":username})
     
 def deleteStudent(req):
 
-    pass
+    logged_user=req.session["username"]
+    student_id=req.POST["student_id"]
+    
+    cursor.execute(f"DELETE FROM Student WHERE student_id = {student_id}")
+    connection.commit()
+    result=cursor.fetchall()
+
+    if cursor.rowcount:
+        return HttpResponseRedirect("../managerHome/deleteStudentPage?state=success")
+    else:
+        return HttpResponseRedirect('../managerHome/deleteStudentPage?state=fail')
 
 def toy(req):
     return render(req, "toy.html")
