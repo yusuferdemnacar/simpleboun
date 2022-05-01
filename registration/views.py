@@ -63,7 +63,7 @@ def studentLogin(req):
 
     if result: #If a result is retrieved
         req.session["username"]=username #Record username into the current session
-        return HttpResponseRedirect('../registration/toy') #Redirect user to home page
+        return HttpResponseRedirect('../registration/studentHome') #Redirect user to home page
     else:
         return HttpResponseRedirect('../registration/studentIndex?fail=true')
 
@@ -95,13 +95,13 @@ def studentHome(req):
     username=req.POST["username"]
     password=req.POST["password"]
 
-    result=run_statement(f"SELECT * FROM Student WHERE username='{username}' and password='{password}';") #Run the query in DB
+    result=run_statement(f"SELECT * FROM Instructor WHERE username='{username}' and password='{password}';") #Run the query in DB
 
     if result: #If a result is retrieved
         req.session["username"]=username #Record username into the current session
         return HttpResponseRedirect('../registration/toy') #Redirect user to home page
     else:
-        return HttpResponseRedirect('../registration/studentIndex?fail=true')
+        return HttpResponseRedirect('../registration/instructorIndex?fail=true')
 
 def instructorHome(req):
     

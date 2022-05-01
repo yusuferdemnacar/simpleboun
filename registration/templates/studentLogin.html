@@ -8,31 +8,30 @@
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
-	<div class="wrapper">
-        <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
-            <h1> Login as Student</h1>
-            <p>
-                Please login to proceed
-            </p>
-        </div>
+    <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+        <h1>Login as Student</h1>
+        <h3>Please login to proceed</h3>
+    </div>
 	</div>
 	<div class="container">
 		<div class="row">
-			<div class="d-flex justify-content-around" style="margin-top: 20px">           
+			<div class="d-flex justify-content-around">           
 				{% if action_fail%}
 					<div class="alert alert-danger" role="alert">
 						<h4 class="alert-heading">Login Failed</h4>
 						<p>Your username or password is not correct</p>
 					</div>
 				{% endif %}
-				<form class="form-group" method="POST" novalidate action="{% url 'studentLogin' %}">
+				<form class="form-group text-center" method="POST" novalidate action="{% url 'studentLogin' %}">
 					{{login_form|crispy}}
 					{% csrf_token %}
 					<button type="submit" style="margin-top: 10px;"class="btn btn-success">Login</button>
 				</form>          
 			</div>
-			<a href="{%url 'index' %}" class="btn btn-primary" role="button">Back</a>
 		</div>
+	</div>
+	<div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+		<a href="{%url 'index' %}" class="btn btn-primary" role="button">Back</a>
 	</div>
 </body>
 </html>

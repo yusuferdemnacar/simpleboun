@@ -21,48 +21,51 @@
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
-            <h2> Welcome back {{username}}.</h2>
+    <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+        <h1>Manager Homepage</h1>
+		<h3>{{username}}</h3>
     </div>
 	<div style="background-color:lavender" class="container-fluid">
 		<br>
 		<div class="row">
-			<div class="col-lg-6 text-center">
+			<div class="col-lg-4 text-center">
 				<a href="{%url 'managerHome/addStudentPage' %}" class="btn btn-primary" role="button">Add Student</a>
 			</div>
-			<div class="col-lg-6 text-center">
+			<div class="col-lg-4 text-center">
 				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Add Instructor</a>
 			</div>
-		</div>
-		<br>
-		<div class="row">
-			<div class="col-lg-6 text-center">
-				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Delete Student</a>
-			</div>
-			<div class="col-lg-6 text-center">
-				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Update Title</a>
-			</div>
-		</div>
-		<br>
-		<div class="row">
-			<div class="col-lg-6 text-center">
-				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Students</a>
-			</div>
-			<div class="col-lg-6 text-center">
+			<div class="col-lg-4 text-center">
 				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Grades of a Student</a>
 			</div>
 		</div>
 		<br>
 		<div class="row">
-			<div class="col-lg-6 text-center">
+			<div class="col-lg-4 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Delete Student</a>
+			</div>
+			<div class="col-lg-4 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Instructors</a>
+			</div>
+			<div class="col-lg-4 text-center">
 				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Courses of an Instructor</a>
 			</div>
-			<div class="col-lg-6 text-center">
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-lg-4 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Students</a>
+			</div>
+			<div class="col-lg-4 text-center">
+				<a href="{%url 'index' %}" class="btn btn-primary" role="button">Update Instructor</a>
+			</div>
+			<div class="col-lg-4 text-center">
 				<a href="{%url 'index' %}" class="btn btn-primary" role="button">View Average Grade of a Course</a>
 			</div>
 		</div>
+		<br>
 	</div>
+	<br>
+	<br>
 	<div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
 		<a href="{%url 'index' %}" class="btn btn-primary" role="button">Logout</a>
     </div>
