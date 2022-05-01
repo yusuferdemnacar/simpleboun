@@ -16,16 +16,19 @@ urlpatterns = [
     path('managerHome', views.managerHome, name="managerHome"),
     path('instructorHome', views.instructorHome, name="instructorHome"),
     #manager urls
+    #add student
     path('managerHome/addStudentPage', views.addStudentPage, name="managerHome/addStudentPage"),
-    path('managerHome/addInstructorPage', views.addInstructorPage, name="managerHome/addInstructorPage"),
-    path('managerHome/deleteStudentPage', views.deleteStudentPage, name="managerHome/deleteStudentPage"),
-    
     path('managerHome/addStudent', views.addStudent, name="managerHome/addStudent"),
+    #add instructor
+    path('managerHome/addInstructorPage', views.addInstructorPage, name="managerHome/addInstructorPage"),
     path('managerHome/addInstructor', views.addInstructor, name="managerHome/addInstructor"),
+    #delete student
+    path('managerHome/deleteStudentPage', views.deleteStudentPage, name="managerHome/deleteStudentPage"),
     path('managerHome/deleteStudent', views.deleteStudent, name="managerHome/deleteStudent"),
-    
+    #view instructors
     path('managerHome/viewInstructorsPage', views.viewInstructorsPage, name="managerHome/viewInstructorsPage"),
-    
+    #view students
+    path('managerHome/viewStudentsPage', views.viewStudentsPage, name="managerHome/viewStudentsPage"),
     
     path('toy', views.toy, name="toy")
 ]

@@ -214,7 +214,9 @@ def deleteStudent(req):
         return HttpResponseRedirect("../managerHome/deleteStudentPage?state=success")
     else:
         return HttpResponseRedirect('../managerHome/deleteStudentPage?state=fail')
-        
+
+# View all instructors
+
 def viewInstructorsPage(req):
 
     cursor.execute("SELECT username, name, surname, email, department_id, title FROM Instructor")
@@ -222,6 +224,16 @@ def viewInstructorsPage(req):
     connection.commit()
     
     return render(req, "viewInstructors.html", {"results":result})
+
+# View all students in ascending order of completed credits
+
+def viewStudentsPage(req):
+
+    cursor.execute("SELECT username, S.name, email, department_id, SUM(credits), SUM(credits*grade)/SUM(credits) FROM (Student S INNER JOIN Grade G ON S.student_id = G.student_id) INNER JOIN Course C ON G.course_id = C.course_id GROUP BY username ORDER BY SUM(credits) ASC;")
+    result=cursor.fetchall()
+    connection.commit()
+    
+    return render(req, "viewStudents.html", {"results":result})
 
 def toy(req):
     return render(req, "toy.html")
