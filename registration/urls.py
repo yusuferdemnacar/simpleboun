@@ -24,6 +24,8 @@ urlpatterns = [
     path('managerHome/addInstructor', views.addInstructor, name="managerHome/addInstructor"),
     path('managerHome/deleteStudent', views.deleteStudent, name="managerHome/deleteStudent"),
     
+    path('managerHome/viewInstructorsPage', views.viewInstructorsPage, name="managerHome/viewInstructorsPage"),
+    
     
     path('toy', views.toy, name="toy")
 ]

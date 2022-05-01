@@ -62,9 +62,9 @@ def managerLogin(req):
 
     cursor.execute(f"SELECT * FROM Database_manager WHERE username='{username}' and password='{password}';") #Run the query in DB
 
-    connection.commit()
-
     result=cursor.fetchall()
+    
+    connection.commit()
 
     if result: #If a result is retrieved
         req.session["username"]=username #Record username into the current session
@@ -80,9 +80,9 @@ def studentLogin(req):
 
     cursor.execute(f"SELECT * FROM Student WHERE username='{username}' and password='{password}';") #Run the query in DB
 
-    connection.commit()
-
     result=cursor.fetchall()
+
+    connection.commit()
 
     if result: #If a result is retrieved
         req.session["username"]=username #Record username into the current session
@@ -98,9 +98,9 @@ def instructorLogin(req):
     
     cursor.execute(f"SELECT * FROM Instructor WHERE username='{username}' and password='{password}';") #Run the query in DB
 
-    connection.commit()
-
     result=cursor.fetchall()
+
+    connection.commit()
 
     if result: #If a result is retrieved
         req.session["username"]=username #Record username into the current session
@@ -128,7 +128,9 @@ def instructorHome(req):
 
     return render(req,'instructorHome.html', {"username":username})
 
-#Manager operations
+# Manager operations
+
+# Add student to the database
 
 def addStudentPage(req):
 
@@ -150,12 +152,14 @@ def addStudent(req):
     
     try:
         cursor.execute(f"INSERT INTO Student VALUES('{username}', {student_id}, '{department_id}', '{password}', '{name}', '{surname}', '{email}')")
-        connection.commit()
         result=cursor.fetchall()
+        connection.commit()
         return HttpResponseRedirect("../managerHome/addStudentPage?state=success")
     except Exception as e:
         print(str(e))
         return HttpResponseRedirect('../managerHome/addStudentPage?state=fail')
+        
+# Add instructor to the database
     
 def addInstructorPage(req):
 
@@ -177,15 +181,18 @@ def addInstructor(req):
     
     try:
         cursor.execute(f"insert into Instructor values('{username}','{department_id}','{title}','{password}','{name}','{surname}','{email}')")
-        connection.commit()
         result=cursor.fetchall()
+        connection.commit()
+
         cursor.execute(f"insert into Lecturer_at values('{username}','{department_id}')")
-        connection.commit()
         result=cursor.fetchall()
+        connection.commit()
         return HttpResponseRedirect("../managerHome/addInstructorPage?state=success")
     except Exception as e:
         print(str(e))
         return HttpResponseRedirect('../managerHome/addInstructorPage?state=fail')
+        
+# Remove student from database
 
 def deleteStudentPage(req):
 
@@ -200,13 +207,21 @@ def deleteStudent(req):
     student_id=req.POST["student_id"]
     
     cursor.execute(f"DELETE FROM Student WHERE student_id = {student_id}")
-    connection.commit()
     result=cursor.fetchall()
+    connection.commit()
 
     if cursor.rowcount:
         return HttpResponseRedirect("../managerHome/deleteStudentPage?state=success")
     else:
         return HttpResponseRedirect('../managerHome/deleteStudentPage?state=fail')
+        
+def viewInstructorsPage(req):
+
+    cursor.execute("SELECT username, name, surname, email, department_id, title FROM Instructor")
+    result=cursor.fetchall()
+    connection.commit()
+    
+    return render(req, "viewInstructors.html", {"results":result})
 
 def toy(req):
     return render(req, "toy.html")
