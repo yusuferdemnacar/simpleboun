@@ -42,6 +42,8 @@ password varchar(64) NOT NULL,
 name varchar(200) NOT NULL,
 surname varchar(200) NOT NULL,
 email varchar(200) NOT NULL,
+completed_credits INT NOT NULL,
+gpa FLOAT NOT NULL,
 PRIMARY KEY(username),
 UNIQUE(student_id),
 FOREIGN KEY(department_id) REFERENCES Department(department_id)

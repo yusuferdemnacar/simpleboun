@@ -229,7 +229,7 @@ def viewInstructorsPage(req):
 
 def viewStudentsPage(req):
 
-    cursor.execute("SELECT username, S.name, S.surname, email, department_id, SUM(credits), SUM(credits*grade)/SUM(credits) FROM (Student S INNER JOIN Grade G ON S.student_id = G.student_id) INNER JOIN Course C ON G.course_id = C.course_id GROUP BY username ORDER BY SUM(credits) ASC;")
+    cursor.execute("SELECT username, name, surname, email, department_id, completed_credits, gpa FROM Student ORDER BY completed_credits ASC;")
     result=cursor.fetchall()
     connection.commit()
     
