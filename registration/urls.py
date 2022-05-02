@@ -5,35 +5,52 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     #login urls
-    path('studentIndex', views.studentIndex, name="studentIndex"),
-    path('managerIndex', views.managerIndex, name="managerIndex"),
+    
+    ##instructor login
     path('instructorIndex', views.instructorIndex, name="instructorIndex"),
-    path('studentLogin', views.studentLogin, name="studentLogin"),
-    path('managerLogin', views.managerLogin, name="managerLogin"),
     path('instructorLogin', views.instructorLogin, name="instructorLogin"),
+    
+    ##student login
+    path('studentIndex', views.studentIndex, name="studentIndex"),
+    path('studentLogin', views.studentLogin, name="studentLogin"),
+    
+    ##manager login
+    path('managerIndex', views.managerIndex, name="managerIndex"),
+    path('managerLogin', views.managerLogin, name="managerLogin"),
+    
     #home page urls
     path('studentHome', views.studentHome, name="studentHome"),
     path('managerHome', views.managerHome, name="managerHome"),
     path('instructorHome', views.instructorHome, name="instructorHome"),
+    
     #manager urls
-    #add student
+    
+    ##add student
     path('managerHome/addStudentPage', views.addStudentPage, name="managerHome/addStudentPage"),
     path('managerHome/addStudent', views.addStudent, name="managerHome/addStudent"),
-    #add instructor
+    
+    ##add instructor
     path('managerHome/addInstructorPage', views.addInstructorPage, name="managerHome/addInstructorPage"),
     path('managerHome/addInstructor', views.addInstructor, name="managerHome/addInstructor"),
-    #delete student
+    
+    ##delete student
     path('managerHome/deleteStudentPage', views.deleteStudentPage, name="managerHome/deleteStudentPage"),
     path('managerHome/deleteStudent', views.deleteStudent, name="managerHome/deleteStudent"),
-    #view instructors
+    
+    ##view instructors
     path('managerHome/viewInstructorsPage', views.viewInstructorsPage, name="managerHome/viewInstructorsPage"),
-    #view students
+    
+    ##view students
     path('managerHome/viewStudentsPage', views.viewStudentsPage, name="managerHome/viewStudentsPage"),
-    #view grades
+    
+    ##view grades
     path('managerHome/viewGradesPage', views.viewGradesPage, name="managerHome/viewGradesPage"),
-    #view courses of instructor
+    
+    ##view courses of instructor
     path('managerHome/viewCoursesInsPage', views.viewCoursesInsPage, name="managerHome/viewCoursesInsPage"),
     
+    ##view avg grade of a course
+    path('managerHome/viewAvgGradePage', views.viewAvgGradePage, name="managerHome/viewAvgGradePage"),
     
     path('toy', views.toy, name="toy")
 ]

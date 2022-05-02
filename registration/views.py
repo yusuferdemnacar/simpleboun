@@ -250,10 +250,11 @@ def viewGradesPage(req):
     
     return render(req, "viewGrades.html", {"results":result, "student_id":student_id})
 
+#View all courses of an instructor
+
 def viewCoursesInsPage(req):
     
     username=req.GET.get("username", 0)
-    print(username)
     
     result=[]
 
@@ -263,6 +264,21 @@ def viewCoursesInsPage(req):
         connection.commit()
     
     return render(req, "viewCoursesIns.html", {"results":result, "username":username})
+    
+#View average grade of a course
+
+def viewAvgGradePage(req):
+    
+    course_id=req.GET.get("course_id", 0)
+    
+    result=[]
+
+    if course_id:
+        cursor.execute(f"SELECT C.course_id, C.name, AVG(grade) FROM Course C INNER JOIN Grade G ON C.course_id = G.course_id WHERE C.course_id = '{course_id}' GROUP BY C.course_id")
+        result=cursor.fetchall()
+        connection.commit()
+    
+    return render(req, "viewAvgGrades.html", {"results":result, "course_id":course_id})
 
 def toy(req):
     return render(req, "toy.html")
