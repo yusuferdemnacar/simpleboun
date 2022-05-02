@@ -447,5 +447,38 @@ def viewMyCoursesPage(req):
     
     return render(req, "viewMyCourses.html", {"results":result})
     
+#Grade a student
+
+def gradeStudentPage(req):
+
+    state=req.GET.get("state", "begin")
+
+    return render(req, "gradeStudent.html", {"state":state})
+
+def gradeStudent(req):
+
+    course_id=req.POST["course_id"]
+    student_id=req.POST["student_id"]
+    grade=req.POST["grade"]
+    username=req.session["username"]
+    
+    cursor.execute(f"SELECT student_id FROM Enrolled E INNER JOIN Lectured_by L ON E.course_id = L.course_id WHERE E.student_id = {student_id} AND L.username = '{username}' AND E.course_id = '{course_id}';")
+    result=cursor.fetchall()
+    
+    if len(result) == 0:
+        print("no such course given by you or no such student taking this course")
+        return HttpResponseRedirect('../instructorHome/gradeStudentPage?state=fail')
+    
+    try:
+        cursor.execute(f"INSERT INTO Grade VALUES({grade},{student_id},'{course_id}');")
+        cursor.execute(f"DELETE FROM Enrolled E WHERE E.student_id = {student_id} AND E.course_id = '{course_id}';")
+        result=cursor.fetchall()
+        connection.commit()
+        
+        return HttpResponseRedirect("../instructorHome/gradeStudentPage?state=success")
+    except Exception as e:
+        print(str(e))
+        return HttpResponseRedirect('../instructorHome/gradeStudentPage?state=fail')
+        
 def toy(req):
     return render(req, "toy.html")

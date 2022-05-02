@@ -79,6 +79,10 @@ urlpatterns = [
     ##view my courses
     path('instructorHome/viewMyCoursesPage', views.viewMyCoursesPage, name="instructorHome/viewMyCoursesPage"),
     
+    ##update name of a course
+    path('instructorHome/gradeStudentPage', views.gradeStudentPage, name="instructorHome/gradeStudentPage"),
+    path('instructorHome/gradeStudent', views.gradeStudent, name="instructorHome/gradeStudent"),
+    
     
     path('toy', views.toy, name="toy")
 ]

@@ -171,7 +171,7 @@ connection.commit()
 #Create triggers
 
 cursor.execute("DELIMITER $$")
-cursor.execute("CREATE TRIGGER GradeTrigger AFTER INSERT ON Grade FOR EACH ROW BEGIN DECLARE credits_taken INT unsigned DEFAULT 1; SELECT C.credits INTO credits_taken FROM Course C WHERE C.course_id = NEW.course_id UPDATE; Student SET gpa = (gpa*completed_credits + NEW.grade)/(completed_credits + credits_taken), completed_credits = completed_credits + credits_taken WHERE student_id = NEW.student_id; END$$")
+cursor.execute("CREATE TRIGGER GradeTrigger AFTER INSERT ON Grade FOR EACH ROW BEGIN DECLARE credits_taken INT unsigned DEFAULT 1; SELECT C.credits INTO credits_taken FROM Course C WHERE C.course_id = NEW.course_id; UPDATE Student SET gpa = (gpa*completed_credits + NEW.grade*credits_taken)/(completed_credits + credits_taken), completed_credits = completed_credits + credits_taken WHERE student_id = NEW.student_id; END$$")
 cursor.execute("DELIMITER ;")
 
 connection.commit()
