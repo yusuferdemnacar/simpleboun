@@ -383,19 +383,13 @@ def addPrerequisite(req):
 
     course_id=req.POST["course_id"]
     prerequisite_id=req.POST["prerequisite_id"]
+    username=req.session["username"]
     
-    cursor.execute(f"SELECT username FROM Lectured_by L WHERE L.course_id = '{course_id}';")
+    cursor.execute(f"SELECT username FROM Lectured_by L WHERE L.course_id = '{course_id}' AND L.username = '{username}';")
     result=cursor.fetchall()
     
     if len(result) == 0:
-        print("no such course")
-        return HttpResponseRedirect('../instructorHome/addPrerequisitePage?state=fail')
-        
-    lecturer=result[0][0]
-    username=req.session["username"]
-    
-    if lecturer != username:
-        print("you are not the lecturer of this course")
+        print("no such course given by you")
         return HttpResponseRedirect('../instructorHome/addPrerequisitePage?state=fail')
     
     try:
