@@ -229,7 +229,7 @@ def viewInstructorsPage(req):
 
 def viewStudentsPage(req):
 
-    cursor.execute("SELECT username, S.name, email, department_id, SUM(credits), SUM(credits*grade)/SUM(credits) FROM (Student S INNER JOIN Grade G ON S.student_id = G.student_id) INNER JOIN Course C ON G.course_id = C.course_id GROUP BY username ORDER BY SUM(credits) ASC;")
+    cursor.execute("SELECT username, S.name, S.surname, email, department_id, SUM(credits), SUM(credits*grade)/SUM(credits) FROM (Student S INNER JOIN Grade G ON S.student_id = G.student_id) INNER JOIN Course C ON G.course_id = C.course_id GROUP BY username ORDER BY SUM(credits) ASC;")
     result=cursor.fetchall()
     connection.commit()
     
@@ -279,6 +279,35 @@ def viewAvgGradePage(req):
         connection.commit()
     
     return render(req, "viewAvgGrades.html", {"results":result, "course_id":course_id})
+    
+#Update title of an instructor
+
+def updateTitlePage(req):
+
+    state=req.GET.get("state", "begin")
+    username=req.session["username"]
+
+    return render(req, "updateTitle.html", {"state":state, "username":username})
+
+def updateTitle(req):
+
+    logged_user=req.session["username"]
+    username=req.POST["username"]
+    new_title=req.POST["title"]
+    
+    try:
+        cursor.execute(f"UPDATE Instructor SET title = '{new_title}' WHERE username = '{username}'")
+        result=cursor.fetchall()
+        connection.commit()
+        
+        if cursor.rowcount:
+            return HttpResponseRedirect("../managerHome/updateTitlePage?state=success")
+        else:
+            return HttpResponseRedirect('../managerHome/updateTitlePage?state=fail')
+            
+    except Exception as e:
+        print(str(e))
+        return HttpResponseRedirect('../managerHome/updateTitlePage?state=fail')
 
 def toy(req):
     return render(req, "toy.html")

@@ -52,5 +52,9 @@ urlpatterns = [
     ##view avg grade of a course
     path('managerHome/viewAvgGradePage', views.viewAvgGradePage, name="managerHome/viewAvgGradePage"),
     
+    ##update the title of an instructor
+    path('managerHome/updateTitlePage', views.updateTitlePage, name="managerHome/updateTitlePage"),
+    path('managerHome/updateTitle', views.updateTitle, name="managerHome/updateTitle"),
+    
     path('toy', views.toy, name="toy")
 ]
