@@ -72,5 +72,13 @@ urlpatterns = [
     path('instructorHome/addPrerequisitePage', views.addPrerequisitePage, name="instructorHome/addPrerequisitePage"),
     path('instructorHome/addPrerequisite', views.addPrerequisite, name="instructorHome/addPrerequisite"),
     
+    ##update name of a course
+    path('instructorHome/updateCourseNamePage', views.updateCourseNamePage, name="instructorHome/updateCourseNamePage"),
+    path('instructorHome/updateCourseName', views.updateCourseName, name="instructorHome/updateCourseName"),
+    
+    ##view my courses
+    path('instructorHome/viewMyCoursesPage', views.viewMyCoursesPage, name="instructorHome/viewMyCoursesPage"),
+    
+    
     path('toy', views.toy, name="toy")
 ]

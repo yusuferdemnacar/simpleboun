@@ -372,7 +372,9 @@ def createCourse(req):
     except Exception as e:
         print(str(e))
         return HttpResponseRedirect('../instructorHome/createCoursePage?state=fail')
-        
+
+#Add prerequisite
+
 def addPrerequisitePage(req):
 
     state=req.GET.get("state", "begin")
@@ -401,6 +403,49 @@ def addPrerequisite(req):
     except Exception as e:
         print(str(e))
         return HttpResponseRedirect('../instructorHome/addPrerequisitePage?state=fail')
+        
+#Update course name
 
+def updateCourseNamePage(req):
+
+    state=req.GET.get("state", "begin")
+
+    return render(req, "updateCourseName.html", {"state":state})
+    
+def updateCourseName(req):
+
+    course_id=req.POST["course_id"]
+    course_name=req.POST["course_name"]
+    username=req.session["username"]
+    
+    cursor.execute(f"SELECT username FROM Lectured_by L WHERE L.course_id = '{course_id}' AND L.username = '{username}';")
+    result=cursor.fetchall()
+    
+    if len(result) == 0:
+        print("no such course given by you")
+        return HttpResponseRedirect('../instructorHome/updateCourseNamePage?state=fail')
+    
+    try:
+        cursor.execute(f"UPDATE Course SET name = '{course_name}' WHERE course_id = '{course_id}';")
+        result=cursor.fetchall()
+        connection.commit()
+        
+        return HttpResponseRedirect("../instructorHome/updateCourseNamePage?state=success")
+    except Exception as e:
+        print(str(e))
+        return HttpResponseRedirect('../instructorHome/updateCourseNamePage?state=fail')
+
+#View my courses
+
+def viewMyCoursesPage(req):
+
+    username=req.session["username"]
+
+    cursor.execute(f"SELECT C.course_id, C.name, S.classroom_id, S.slot, C.quota, GROUP_CONCAT(P.prerequisite_id) FROM ((Course C INNER JOIN Schedule S ON C.course_id = S.course_id) INNER JOIN Lectured_by L ON L.course_id = C.course_id) LEFT OUTER JOIN Prerequisite P ON P.course_id = C.course_id WHERE L.username = '{username}' GROUP BY C.course_id ORDER BY C.course_id ASC;")
+    result=cursor.fetchall()
+    connection.commit()
+    
+    return render(req, "viewMyCourses.html", {"results":result})
+    
 def toy(req):
     return render(req, "toy.html")
