@@ -308,6 +308,22 @@ def updateTitle(req):
     except Exception as e:
         print(str(e))
         return HttpResponseRedirect('../managerHome/updateTitlePage?state=fail')
+        
+# Instructor Operations
+
+def viewMyStudentsPage(req):
+    
+    course_id=req.GET.get("course_id", 0)
+    username=req.session["username"]
+    
+    result=[]
+
+    if course_id:
+        cursor.execute(f"SELECT S.username, S.student_id, S.email, S.name, S.surname FROM (Enrolled E INNER JOIN Lectured_by L ON E.course_id = L.course_id) INNER JOIN Student S ON E.student_id = S.student_id WHERE E.course_id = '{course_id}' AND L.username = '{username}'")
+        result=cursor.fetchall()
+        connection.commit()
+    
+    return render(req, "viewMyStudents.html", {"results":result, "course_id":course_id})
 
 def toy(req):
     return render(req, "toy.html")
