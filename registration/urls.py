@@ -61,5 +61,8 @@ urlpatterns = [
     ##view my students
     path('instructorHome/viewMyStudentsPage', views.viewMyStudentsPage, name="instructorHome/viewMyStudentsPage"),
     
+    ##view available classrooms
+    path('instructorHome/viewClassroomsPage', views.viewClassroomsPage, name="instructorHome/viewClassroomsPage"),
+    
     path('toy', views.toy, name="toy")
 ]

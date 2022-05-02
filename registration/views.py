@@ -311,6 +311,8 @@ def updateTitle(req):
         
 # Instructor Operations
 
+#View my students
+
 def viewMyStudentsPage(req):
     
     course_id=req.GET.get("course_id", 0)
@@ -324,6 +326,21 @@ def viewMyStudentsPage(req):
         connection.commit()
     
     return render(req, "viewMyStudents.html", {"results":result, "course_id":course_id})
+
+#View available classrooms
+
+def viewClassroomsPage(req):
+    
+    slot=req.GET.get("slot", 0)
+    
+    result=[]
+
+    if slot:
+        cursor.execute(f"SELECT R.classroom_id, R.campus, R.capacity FROM Classroom R WHERE R.classroom_id NOT IN ( SELECT C.classroom_id FROM Classroom C INNER JOIN Plan P ON P.classroom_id = C.classroom_id WHERE P.slot = {slot})")
+        result=cursor.fetchall()
+        connection.commit()
+    
+    return render(req, "viewClassrooms.html", {"results":result, "slot":slot})
 
 def toy(req):
     return render(req, "toy.html")

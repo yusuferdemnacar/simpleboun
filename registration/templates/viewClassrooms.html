@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  	<title>Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        table, th, td {
+            border: 1px solid;
+        }
+        .center {
+            margin-left: auto;
+            margin-right: auto;
+            justify-content: center;
+        }
+        form { 
+            margin: 0 auto; 
+            width:250px;
+        }
+    </style>
+</head>
+<body>
+    <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+        <h2>Available Classrooms</h2>
+    </div>
+	<div class="text-center">
+        <form id="form" class="form-group" method="GET" action="{%url 'instructorHome/viewClassroomsPage' %}">
+                {%csrf_token%}
+                <label>Select a Time Slot</label>
+				<br>
+                <input type="text" name="slot" placeholder="Time Slot" required>
+                <br>
+				<br>
+                <input class="btn btn-success" type="submit" value="View Classrooms">
+                <br>
+				<br>
+        </form>
+    </div>
+	{% if slot != 0 %}
+	<div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+        <h2>Slot {{slot}}</h2>
+    </div>
+	<table class="table table-striped table-bordered">
+		<thead>
+			<tr>
+				<th scope="col">Classroom ID</th>
+				<th scope="col">Campus</th>
+				<th scope="col">Classroom Capacity</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in results %}
+			<tr>
+				{% for value in row %}
+				<td>
+					{{value}}
+				</td>
+			{% endfor %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+	<div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+		<a href="{%url 'instructorHome' %}" class="btn btn-primary" role="button">Back</a>
+    </div>
+</body>
+</html>
