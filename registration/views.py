@@ -479,6 +479,29 @@ def gradeStudent(req):
     except Exception as e:
         print(str(e))
         return HttpResponseRedirect('../instructorHome/gradeStudentPage?state=fail')
-        
+
+# Student Operations
+
+#View my courses
+
+def viewCoursesStuPage(req):
+
+    username=req.session["username"]
+    
+    cursor.execute(f"SELECT S.student_id FROM Student S WHERE S.username='{username}'")
+    stu_id=cursor.fetchall()
+    student_id=stu_id[0][0]
+    connection.commit()
+
+    cursor.execute(f"SELECT C.course_id, C.name, G.grade FROM (Enrolled E INNER JOIN Course C ON E.course_id = C.course_id) LEFT OUTER JOIN Grade G ON G.course_id = E.course_id WHERE E.student_id = {student_id};")
+    present_courses=cursor.fetchall()
+    connection.commit()
+    
+    cursor.execute(f"SELECT C.course_id, C.name, G.grade FROM Grade G INNER JOIN Course C ON G.course_id = C.course_id WHERE G.student_id = {student_id};")
+    taken_courses=cursor.fetchall()
+    connection.commit()
+    
+    return render(req, "viewCoursesStu.html", {"results":present_courses+taken_courses})
+
 def toy(req):
     return render(req, "toy.html")

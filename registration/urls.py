@@ -83,6 +83,8 @@ urlpatterns = [
     path('instructorHome/gradeStudentPage', views.gradeStudentPage, name="instructorHome/gradeStudentPage"),
     path('instructorHome/gradeStudent', views.gradeStudent, name="instructorHome/gradeStudent"),
     
+    ##view available classrooms
+    path('studentHome/viewCoursesStuPage', views.viewCoursesStuPage, name="studentHome/viewCoursesStuPage"),
     
     path('toy', views.toy, name="toy")
 ]
