@@ -341,6 +341,37 @@ def viewClassroomsPage(req):
         connection.commit()
     
     return render(req, "viewClassrooms.html", {"results":result, "slot":slot})
+    
+#Add course
+
+def createCoursePage(req):
+
+    state=req.GET.get("state", "begin")
+
+    return render(req, "createCourse.html", {"state":state})
+    
+def createCourse(req):
+
+    username=req.session["username"]
+    name=req.POST["name"]
+    course_id=req.POST["course_id"]
+    classroom_id=req.POST["classroom_id"]
+    slot=req.POST["slot"]
+    credits=req.POST["credit"]
+    quota=req.POST["quota"]
+    
+    try:
+        cursor.execute(f"INSERT INTO Course VALUES('{course_id}','{name}',{credits},{quota});")
+        cursor.execute(f"INSERT INTO Lectured_by VALUES('{course_id}','{username}');")
+        cursor.execute(f"INSERT INTO Plan VALUES('{classroom_id}',{slot});")
+        cursor.execute(f"INSERT INTO Schedule VALUES('{classroom_id}',{slot},'{course_id}');")
+        result=cursor.fetchall()
+        connection.commit()
+        
+        return HttpResponseRedirect("../instructorHome/createCoursePage?state=success")
+    except Exception as e:
+        print(str(e))
+        return HttpResponseRedirect('../instructorHome/createCoursePage?state=fail')
 
 def toy(req):
     return render(req, "toy.html")

@@ -64,5 +64,9 @@ urlpatterns = [
     ##view available classrooms
     path('instructorHome/viewClassroomsPage', views.viewClassroomsPage, name="instructorHome/viewClassroomsPage"),
     
+    ##add course
+    path('instructorHome/createCoursePage', views.createCoursePage, name="instructorHome/createCoursePage"),
+    path('instructorHome/createCourse', views.createCourse, name="instructorHome/createCourse"),
+    
     path('toy', views.toy, name="toy")
 ]
