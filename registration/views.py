@@ -240,7 +240,6 @@ def viewStudentsPage(req):
 def viewGradesPage(req):
 
     student_id=req.GET.get("student_id", 0)
-    print(student_id)
     
     result=[]
 
@@ -250,6 +249,20 @@ def viewGradesPage(req):
         connection.commit()
     
     return render(req, "viewGrades.html", {"results":result, "student_id":student_id})
+
+def viewCoursesInsPage(req):
+    
+    username=req.GET.get("username", 0)
+    print(username)
+    
+    result=[]
+
+    if username:
+        cursor.execute(f"SELECT C.course_id, C.name, R.classroom_id, campus, slot FROM ((Course C INNER JOIN Schedule S ON C.course_id = S.course_id) INNER JOIN Classroom R ON S.classroom_id = R.classroom_id) INNER JOIN Lectured_by L ON L.course_id = C.course_id WHERE L.username = '{username}'")
+        result=cursor.fetchall()
+        connection.commit()
+    
+    return render(req, "viewCoursesIns.html", {"results":result, "username":username})
 
 def toy(req):
     return render(req, "toy.html")

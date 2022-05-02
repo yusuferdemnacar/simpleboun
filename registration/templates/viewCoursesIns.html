@@ -25,28 +25,30 @@
         <h2>Grades</h2>
     </div>
 	<div class="text-center">
-        <form id="form" class="form-group" method="GET" action="{%url 'managerHome/viewGradesPage' %}">
+        <form id="form" class="form-group" method="GET" action="{%url 'managerHome/viewCoursesInsPage' %}">
                 {%csrf_token%}
-                <label>Select a Student</label>
+                <label>Select an Instructor</label>
 				<br>
-                <input type="text" name="student_id" placeholder="Student ID" required>
+                <input type="text" name="username" placeholder="Username" required>
                 <br>
 				<br>
-                <input class="btn btn-success" type="submit" value="View Grades">
+                <input class="btn btn-success" type="submit" value="View Courses">
                 <br>
 				<br>
         </form>
     </div>
-	{% if student_id != 0 %}
+	{% if username != 0 %}
 	<div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
-        <h2>Student {{student_id}}</h2>
+        <h2>Instructor {{username}}</h2>
     </div>
 	<table class="table table-striped table-bordered">
 		<thead>
 			<tr>
 				<th scope="col">Course ID</th>
 				<th scope="col">Course Name</th>
-				<th scope="col">Grade</th>
+				<th scope="col">Classroom ID</th>
+				<th scope="col">Campus</th>
+				<th scope="col">Time Slot</th>
 			</tr>
 		</thead>
 		<tbody>

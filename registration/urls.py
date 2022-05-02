@@ -31,6 +31,8 @@ urlpatterns = [
     path('managerHome/viewStudentsPage', views.viewStudentsPage, name="managerHome/viewStudentsPage"),
     #view grades
     path('managerHome/viewGradesPage', views.viewGradesPage, name="managerHome/viewGradesPage"),
+    #view courses of instructor
+    path('managerHome/viewCoursesInsPage', views.viewCoursesInsPage, name="managerHome/viewCoursesInsPage"),
     
     
     path('toy', views.toy, name="toy")
