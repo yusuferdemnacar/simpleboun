@@ -68,5 +68,9 @@ urlpatterns = [
     path('instructorHome/createCoursePage', views.createCoursePage, name="instructorHome/createCoursePage"),
     path('instructorHome/createCourse', views.createCourse, name="instructorHome/createCourse"),
     
+    ##add prerequisite
+    path('instructorHome/addPrerequisitePage', views.addPrerequisitePage, name="instructorHome/addPrerequisitePage"),
+    path('instructorHome/addPrerequisite', views.addPrerequisite, name="instructorHome/addPrerequisite"),
+    
     path('toy', views.toy, name="toy")
 ]

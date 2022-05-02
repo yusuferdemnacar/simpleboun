@@ -372,6 +372,41 @@ def createCourse(req):
     except Exception as e:
         print(str(e))
         return HttpResponseRedirect('../instructorHome/createCoursePage?state=fail')
+        
+def addPrerequisitePage(req):
+
+    state=req.GET.get("state", "begin")
+
+    return render(req, "addPrerequisite.html", {"state":state})
+    
+def addPrerequisite(req):
+
+    course_id=req.POST["course_id"]
+    prerequisite_id=req.POST["prerequisite_id"]
+    
+    cursor.execute(f"SELECT username FROM Lectured_by L WHERE L.course_id = '{course_id}';")
+    result=cursor.fetchall()
+    
+    if len(result) == 0:
+        print("no such course")
+        return HttpResponseRedirect('../instructorHome/addPrerequisitePage?state=fail')
+        
+    lecturer=result[0][0]
+    username=req.session["username"]
+    
+    if lecturer != username:
+        print("you are not the lecturer of this course")
+        return HttpResponseRedirect('../instructorHome/addPrerequisitePage?state=fail')
+    
+    try:
+        cursor.execute(f"INSERT INTO Prerequisite VALUES('{course_id}','{prerequisite_id}');")
+        result=cursor.fetchall()
+        connection.commit()
+        
+        return HttpResponseRedirect("../instructorHome/addPrerequisitePage?state=success")
+    except Exception as e:
+        print(str(e))
+        return HttpResponseRedirect('../instructorHome/addPrerequisitePage?state=fail')
 
 def toy(req):
     return render(req, "toy.html")
