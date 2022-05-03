@@ -156,7 +156,7 @@ def addStudent(req):
     department_id=req.POST["department_id"]
     
     try:
-        cursor.execute(f"INSERT INTO Student VALUES('{username}', {student_id}, '{department_id}', '{password}', '{name}', '{surname}', '{email}', 0, 0)")
+        cursor.execute(f"INSERT INTO Student VALUES('{username}', '{student_id}', '{department_id}', '{password}', '{name}', '{surname}', '{email}', 0, 0)")
         result=cursor.fetchall()
         connection.commit()
         return HttpResponseRedirect("../managerHome/addStudentPage?state=success")
@@ -212,7 +212,7 @@ def deleteStudent(req):
     logged_user=req.session["username"]
     student_id=req.POST["student_id"]
     
-    cursor.execute(f"DELETE FROM Student WHERE student_id = {student_id}")
+    cursor.execute(f"DELETE FROM Student WHERE student_id = '{student_id}'")
     result=cursor.fetchall()
     connection.commit()
 
@@ -481,7 +481,7 @@ def gradeStudent(req):
     grade=req.POST["grade"]
     username=req.session["username"]
     
-    cursor.execute(f"SELECT student_id FROM Enrolled E INNER JOIN Lectured_by L ON E.course_id = L.course_id WHERE E.student_id = {student_id} AND L.username = '{username}' AND E.course_id = '{course_id}';")
+    cursor.execute(f"SELECT student_id FROM Enrolled E INNER JOIN Lectured_by L ON E.course_id = L.course_id WHERE E.student_id = '{student_id}' AND L.username = '{username}' AND E.course_id = '{course_id}';")
     result=cursor.fetchall()
     
     if len(result) == 0:
@@ -489,8 +489,8 @@ def gradeStudent(req):
         return HttpResponseRedirect('../instructorHome/gradeStudentPage?state=fail')
     
     try:
-        cursor.execute(f"INSERT INTO Grade VALUES({grade},{student_id},'{course_id}');")
-        cursor.execute(f"DELETE FROM Enrolled E WHERE E.student_id = {student_id} AND E.course_id = '{course_id}';")
+        cursor.execute(f"INSERT INTO Grade VALUES({grade},'{student_id}','{course_id}');")
+        cursor.execute(f"DELETE FROM Enrolled E WHERE E.student_id = '{student_id}' AND E.course_id = '{course_id}';")
         result=cursor.fetchall()
         connection.commit()
         
@@ -514,12 +514,12 @@ def viewCoursesStuPage(req):
     
     print(student_id)
 
-    cursor.execute(f"SELECT C.course_id, C.name, NULL FROM (Enrolled E INNER JOIN Course C ON E.course_id = C.course_id) WHERE E.student_id = {student_id};")
+    cursor.execute(f"SELECT C.course_id, C.name, NULL FROM (Enrolled E INNER JOIN Course C ON E.course_id = C.course_id) WHERE E.student_id = '{student_id}';")
     present_courses=cursor.fetchall()
     print(present_courses)
     connection.commit()
     
-    cursor.execute(f"SELECT C.course_id, C.name, G.grade FROM Grade G INNER JOIN Course C ON G.course_id = C.course_id WHERE G.student_id = {student_id};")
+    cursor.execute(f"SELECT C.course_id, C.name, G.grade FROM Grade G INNER JOIN Course C ON G.course_id = C.course_id WHERE G.student_id = '{student_id}';")
     taken_courses=cursor.fetchall()
     print(taken_courses)
     connection.commit()
@@ -589,7 +589,7 @@ def addCourse(req):
     print(student_id)
     
     try:
-        cursor.execute(f"INSERT INTO Enrolled VALUES({student_id},'{course_id}');")
+        cursor.execute(f"INSERT INTO Enrolled VALUES('{student_id}','{course_id}');")
         result=cursor.fetchall()
         connection.commit()
         
