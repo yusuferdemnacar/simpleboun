@@ -361,16 +361,29 @@ def createCourse(req):
     quota=req.POST["quota"]
     
     try:
+        print(1)
         cursor.execute(f"INSERT INTO Course VALUES('{course_id}','{name}',{credits},{quota});")
+        print(2)
         cursor.execute(f"INSERT INTO Lectured_by VALUES('{course_id}','{username}');")
+        print(3)
         cursor.execute(f"INSERT INTO Plan VALUES('{classroom_id}',{slot});")
+    except Exception as e:
+        print(str(e))
+        print(6)
+        connection.rollback()
+        return HttpResponseRedirect('../instructorHome/createCoursePage?state=fail')
+    
+    try:
+        print(4)
         cursor.execute(f"INSERT INTO Schedule VALUES('{classroom_id}',{slot},'{course_id}');")
+        print(5)
         result=cursor.fetchall()
         connection.commit()
         
         return HttpResponseRedirect("../instructorHome/createCoursePage?state=success")
     except Exception as e:
         print(str(e))
+        print(6)
         return HttpResponseRedirect('../instructorHome/createCoursePage?state=fail')
 
 #Add prerequisite
@@ -492,13 +505,17 @@ def viewCoursesStuPage(req):
     stu_id=cursor.fetchall()
     student_id=stu_id[0][0]
     connection.commit()
+    
+    print(student_id)
 
-    cursor.execute(f"SELECT C.course_id, C.name, G.grade FROM (Enrolled E INNER JOIN Course C ON E.course_id = C.course_id) LEFT OUTER JOIN Grade G ON G.course_id = E.course_id WHERE E.student_id = {student_id};")
+    cursor.execute(f"SELECT C.course_id, C.name, NULL FROM (Enrolled E INNER JOIN Course C ON E.course_id = C.course_id) WHERE E.student_id = {student_id};")
     present_courses=cursor.fetchall()
+    print(present_courses)
     connection.commit()
     
     cursor.execute(f"SELECT C.course_id, C.name, G.grade FROM Grade G INNER JOIN Course C ON G.course_id = C.course_id WHERE G.student_id = {student_id};")
     taken_courses=cursor.fetchall()
+    print(taken_courses)
     connection.commit()
     
     return render(req, "viewCoursesStu.html", {"results":present_courses+taken_courses})
@@ -542,6 +559,38 @@ def viewAllCoursesPage(req):
         cursor=connection.cursor()
         
     return render(req, "viewAllCourses.html", {"results":result, "keyword":keyword, "department_id":department_id, "campus":campus, "min_credits":min_credits, "max_credits":max_credits})
+
+#Add prerequisite
+
+def addCoursePage(req):
+
+    state=req.GET.get("state", "begin")
+
+    return render(req, "addCourse.html", {"state":state})
+    
+def addCourse(req):
+
+    course_id=req.POST["course_id"]
+
+    username=req.session["username"]
+    
+    cursor.execute(f"SELECT S.student_id FROM Student S WHERE S.username='{username}'")
+    stu_id=cursor.fetchall()
+    student_id=stu_id[0][0]
+    connection.commit()
+    
+    print(username)
+    print(student_id)
+    
+    try:
+        cursor.execute(f"INSERT INTO Enrolled VALUES({student_id},'{course_id}');")
+        result=cursor.fetchall()
+        connection.commit()
+        
+        return HttpResponseRedirect("../studentHome/addCoursePage?state=success")
+    except Exception as e:
+        print(str(e))
+        return HttpResponseRedirect('../studentHome/addCoursePage?state=fail')
 
 def toy(req):
     return render(req, "toy.html")

@@ -210,11 +210,13 @@ INTO CQuota
 FROM Course C 
 WHERE C.course_id = NEW.course_id; 
 
-IF CCapacity < CQuota OR EXISTS(SELECT * FROM Schedule S WHERE S.slot = NEW.slot AND S.classroom_id = NEW.classroom_id) 
-THEN 
+IF CCapacity < CQuota THEN 
 
-DELETE FROM Plan P WHERE P.course_id = NEW.course_id; 
-DELETE FROM Lectured_by L WHERE L.course_id = NEW.course_id; 
+DELETE FROM Plan P 
+WHERE P.classroom_id = NEW.classroom_id AND P.slot = NEW.slot; 
+
+DELETE FROM Lectured_by L 
+WHERE L.course_id = NEW.course_id; 
 DELETE FROM Course C WHERE C.course_id = NEW.course_id; 
 
 signal sqlstate '45000'; 
@@ -225,13 +227,84 @@ END$$
 """)
 cursor.execute("DELIMITER ;")
 
+cursor.execute("DELIMITER $$")
+cursor.execute("""
+CREATE TRIGGER FourManagers
+BEFORE INSERT ON Database_manager
+FOR EACH ROW
+BEGIN
+
+DECLARE manager_amount INT unsigned DEFAULT 0;
+SELECT COUNT(*)
+INTO manager_amount
+FROM Database_manager;
+
+IF manager_amount > 3
+THEN
+
+signal sqlstate '45000';
+
+END IF;
+
+END$$
+""")
+cursor.execute("DELIMITER ;")
+
+cursor.exeute("""
+CREATE TRIGGER EnrollTrigger
+BEFORE INSERT ON Enrolled
+FOR EACH ROW
+BEGIN
+    DECLARE taken_prerequisites INT unsigned DEFAULT 0;
+    DECLARE prerequisite_count INT unsigned DEFAULT 0;
+    DECLARE is_enrolled INT unsigned DEFAULT 0;
+    DECLARE course_quota INT unsigned DEFAULT 0;
+    DECLARE enrolled_students INT unsigned DEFAULT 0;
+
+
+    SELECT COUNT(*)
+    INTO taken_prerequisites
+    FROM    (SELECT DISTINCT P.prerequisite_id
+        FROM Prerequisite P INNER JOIN Grade G ON G.course_id = P.prerequisite_id
+        WHERE P.course_id = NEW.course_id) AS Q
+    WHERE Q.prerequisite_id IN    (SELECT K.course_id
+                        FROM Grade K
+                        WHERE K.student_id = NEW.student_id);
+
+    SELECT COUNT(*)
+    INTO prerequisite_count
+    FROM Prerequisite P
+    WHERE P.course_id = NEW.course_id;
+
+    SELECT COUNT(*)
+    INTO is_enrolled
+    FROM Enrolled E
+    WHERE E.student_id = NEW.student_id AND E.course_id = NEW.course_id;
+
+    SELECT COUNT(*)
+    INTO enrolled_students
+    FROM Enrolled E
+    WHERE E.course_id = NEW.course_id;
+
+    SELECT C.quota
+    INTO course_quota
+    FROM Course C
+    WHERE C.course_id = NEW.course_id;
+
+    IF taken_prerequisites != prerequisite_count OR enrolled_students >= course_quota THEN
+
+    signal sqlstate '45000';
+    END IF;
+END$$
+""")
+
 connection.commit()
 
 #Create stored procedure
 
 cursor.execute("DELIMITER $$")
 cursor.execute("""
-    CREATE PROCEDURE FilterCourses(IN dep_id VARCHAR(200), IN cmps VARCHAR(200),
+CREATE PROCEDURE FilterCourses(IN dep_id VARCHAR(200), IN cmps VARCHAR(200),
 IN min_credits INT, IN max_credits INT)
 BEGIN
     SELECT C.course_id, C.name, I.surname, I.department_id, C.credits,

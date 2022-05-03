@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  	<title>Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        table, th, td {
+            border: 1px solid;
+        }
+        .center {
+            margin-left: auto;
+            margin-right: auto;
+            justify-content: center;
+        }
+        form { 
+            margin: 0 auto; 
+            width:250px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+            <h2>Add Course</h2>
+    </div>
+    {% if state == "fail" %}
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Course addition failed</h4>
+        <p>Values entered violate constraints</p>
+    </div>
+    {% endif %}
+	{% if state == "success" %}
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">Course addition successful</h4>
+        <p>Values entered do not violate constraints</p>
+    </div>
+    {% endif %}
+    <div class="text-center">
+        <form class="form-group" method="POST" action="{%url 'studentHome/addCourse' %}">
+                {%csrf_token%}
+                <label>Add a Course</label>
+                <br>
+				<br>
+                <input type="text" name="course_id" placeholder="Course ID" required>
+                <br>
+				<br>
+                <input class="btn btn-success" type="submit" value="Add Course">
+                <br>
+				<br>
+        </form>
+    </div>
+	<div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+		<a href="{%url 'studentHome' %}" class="btn btn-primary" role="button">Back</a>
+    </div>
+</body>
+</html>
