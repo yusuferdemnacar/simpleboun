@@ -171,7 +171,81 @@ connection.commit()
 #Create triggers
 
 cursor.execute("DELIMITER $$")
-cursor.execute("CREATE TRIGGER GradeTrigger AFTER INSERT ON Grade FOR EACH ROW BEGIN DECLARE credits_taken INT unsigned DEFAULT 1; SELECT C.credits INTO credits_taken FROM Course C WHERE C.course_id = NEW.course_id; UPDATE Student SET gpa = (gpa*completed_credits + NEW.grade*credits_taken)/(completed_credits + credits_taken), completed_credits = completed_credits + credits_taken WHERE student_id = NEW.student_id; END$$")
+cursor.execute("""
+CREATE TRIGGER GradeTrigger 
+AFTER INSERT ON Grade 
+FOR EACH ROW 
+BEGIN 
+
+DECLARE credits_taken INT unsigned DEFAULT 1; 
+
+SELECT C.credits 
+INTO credits_taken 
+FROM Course C WHERE 
+C.course_id = NEW.course_id; 
+
+UPDATE Student SET gpa = (gpa*completed_credits + NEW.grade*credits_taken)/(completed_credits + credits_taken), completed_credits = completed_credits + credits_taken 
+WHERE student_id = NEW.student_id; 
+END$$
+""")
+cursor.execute("DELIMITER ;")
+
+cursor.execute("DELIMITER $$")
+cursor.execute("""
+CREATE TRIGGER ScheduleTrigger 
+BEFORE INSERT ON Schedule 
+FOR EACH ROW 
+BEGIN 
+
+DECLARE CCapacity INT unsigned DEFAULT 0; 
+DECLARE CQuota INT unsigned DEFAULT 0; 
+
+SELECT C.capacity 
+INTO CCapacity 
+FROM Classroom C 
+WHERE C.classroom_id = NEW.classroom_id; 
+
+SELECT C.quota 
+INTO CQuota 
+FROM Course C 
+WHERE C.course_id = NEW.course_id; 
+
+IF CCapacity < CQuota OR EXISTS(SELECT * FROM Schedule S WHERE S.slot = NEW.slot AND S.classroom_id = NEW.classroom_id) 
+THEN 
+
+DELETE FROM Plan P WHERE P.course_id = NEW.course_id; 
+DELETE FROM Lectured_by L WHERE L.course_id = NEW.course_id; 
+DELETE FROM Course C WHERE C.course_id = NEW.course_id; 
+
+signal sqlstate '45000'; 
+
+END IF; 
+
+END$$
+""")
+cursor.execute("DELIMITER ;")
+
+connection.commit()
+
+#Create stored procedure
+
+cursor.execute("DELIMITER $$")
+cursor.execute("""
+    CREATE PROCEDURE FilterCourses(IN dep_id VARCHAR(200), IN cmps VARCHAR(200),
+IN min_credits INT, IN max_credits INT)
+BEGIN
+    SELECT C.course_id, C.name, I.surname, I.department_id, C.credits,
+        S.classroom_id, S.slot, C.quota, GROUP_CONCAT(P.prerequisite_id)
+    FROM ((((Course C INNER JOIN Lectured_by L ON L.course_id = C.course_id)
+        INNER JOIN Instructor I ON L.username = I.username)
+        INNER JOIN Schedule S ON S.course_id = C.course_id)
+        INNER JOIN Classroom R ON R.classroom_id = S.classroom_id)
+        LEFT OUTER JOIN Prerequisite P ON P.course_id = C.course_id
+    WHERE I.department_id = dep_id AND R.campus = cmps 
+        AND C.credits >= min_credits AND C.credits <= max_credits
+    GROUP BY C.course_id;
+END $$
+""")
 cursor.execute("DELIMITER ;")
 
 connection.commit()

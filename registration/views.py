@@ -502,6 +502,46 @@ def viewCoursesStuPage(req):
     connection.commit()
     
     return render(req, "viewCoursesStu.html", {"results":present_courses+taken_courses})
+    
+#View all courses
+
+def viewAllCoursesPage(req):
+
+    global cursor
+
+    keyword=req.GET.get("keyword", False)
+    department_id=req.GET.get("department_id", 0)
+    campus=req.GET.get("campus", 0)
+    min_credits=req.GET.get("min_credits", 0)
+    max_credits=req.GET.get("max_credits", 0)
+    username=req.session["username"]
+    fail=req.GET.get("fail", False)
+    
+    result=[]
+    
+    print(bool(not keyword) and bool(department_id == 0))
+    print(bool(keyword) and bool(department_id == 0))
+    print(bool(not keyword) and bool(department_id != 0))
+    
+    if not keyword and department_id == 0:
+        cursor.execute(f"SELECT C.course_id, C.name, I.surname, I.department_id, C.credits, S.classroom_id, S.slot, C.quota, GROUP_CONCAT(P.prerequisite_id) FROM (((Lectured_by L INNER JOIN Instructor I ON L.username = I.username) INNER JOIN Course C ON L.course_id = C.course_id) INNER JOIN Schedule S ON S.course_id = C.course_id) LEFT OUTER JOIN Prerequisite P ON P.course_id = C.course_id GROUP BY C.course_id;")
+        result=cursor.fetchall()
+        connection.commit()
+    
+    if keyword and department_id == 0:
+        cursor.execute(f"SELECT C.course_id, C.name, I.surname, I.department_id, C.credits, S.classroom_id, S.slot, C.quota, GROUP_CONCAT(P.prerequisite_id) FROM (((Course C INNER JOIN Lectured_by L ON L.course_id = C.course_id) INNER JOIN Instructor I ON L.username = I.username) INNER JOIN Schedule S ON S.course_id = C.course_id) LEFT OUTER JOIN Prerequisite P ON P.course_id = C.course_id WHERE LOCATE('{keyword}', C.name) > 0 GROUP BY course_id;")
+        result=cursor.fetchall()
+        connection.commit()
+        
+    if not keyword and department_id != 0:
+    
+        cursor.execute(f"CALL FilterCourses('{department_id}', '{campus}', '{min_credits}', '{max_credits}');")
+        result=cursor.fetchall()
+        cursor.close()
+        connection.reconnect()
+        cursor=connection.cursor()
+        
+    return render(req, "viewAllCourses.html", {"results":result, "keyword":keyword, "department_id":department_id, "campus":campus, "min_credits":min_credits, "max_credits":max_credits})
 
 def toy(req):
     return render(req, "toy.html")

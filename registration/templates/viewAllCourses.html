@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  	<title>Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        table, th, td {
+            border: 1px solid;
+        }
+        .center {
+            margin-left: auto;
+            margin-right: auto;
+            justify-content: center;
+        }
+        form { 
+            margin: 0 auto; 
+            width:250px;
+        }
+    </style>
+</head>
+<body>
+    <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+        <h2>Courses</h2>
+    </div>
+	<div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+		<a href="{%url 'studentHome/viewAllCoursesPage' %}" class="btn btn-primary" role="button">Clear Filters</a>
+    </div>
+	<div class="text-center">
+		<div style="width: 50%; float: left;"> 
+			<form id="form" class="form-group" method="GET" action="{%url 'studentHome/viewAllCoursesPage' %}">
+                {%csrf_token%}
+                <label>Search by Keyword</label>
+				<br>
+                <input type="text" name="keyword" placeholder="Keyword" required>
+                <br>
+				<br>
+                <input class="btn btn-success" type="submit" value="Search">
+                <br>
+				<br>
+			</form>
+        </div>
+		<div style="margin-left: 50%"> 
+            <form id="form" class="form-group" method="GET" action="{%url 'studentHome/viewAllCoursesPage' %}">
+                {%csrf_token%}
+                <label>Filter by Department, Campus and Credit Interval</label>
+				<br>
+                <input type="text" name="department_id" placeholder="Department ID" required>
+                <br>
+				<br>
+				<input type="text" name="campus" placeholder="Campus" required>
+                <br>
+				<br>
+				<input type="text" name="min_credits" placeholder="Minimum Credits" required>
+                <br>
+				<br>
+				<input type="text" name="max_credits" placeholder="Maximum Credits" required>
+                <br>
+				<br>
+                <input class="btn btn-success" type="submit" value="Filter">
+                <br>
+				<br>
+			</form>
+        </div>
+    </div>
+	<table class="table table-striped table-bordered">
+		<thead>
+			<tr>
+				<th scope="col">Course ID</th>
+				<th scope="col">Course Name</th>
+				<th scope="col">Instructor surname</th>
+				<th scope="col">Department ID</th>
+				<th scope="col">Credits</th>
+				<th scope="col">Classroom ID</th>
+				<th scope="col">Time Slot</th>
+				<th scope="col">Quota</th>
+				<th scope="col">Prerequisite List</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in results %}
+			<tr>
+				{% for value in row %}
+				<td>
+					{{value}}
+				</td>
+			{% endfor %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+		<a href="{%url 'studentHome' %}" class="btn btn-primary" role="button">Back</a>
+    </div>
+</body>
+</html>
