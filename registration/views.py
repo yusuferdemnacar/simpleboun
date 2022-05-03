@@ -151,7 +151,7 @@ def addStudent(req):
     department_id=req.POST["department_id"]
     
     try:
-        cursor.execute(f"INSERT INTO Student VALUES('{username}', {student_id}, '{department_id}', '{password}', '{name}', '{surname}', '{email}')")
+        cursor.execute(f"INSERT INTO Student VALUES('{username}', {student_id}, '{department_id}', '{password}', '{name}', '{surname}', '{email}', 0, 0)")
         result=cursor.fetchall()
         connection.commit()
         return HttpResponseRedirect("../managerHome/addStudentPage?state=success")

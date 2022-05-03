@@ -250,6 +250,7 @@ END$$
 """)
 cursor.execute("DELIMITER ;")
 
+cursor.execute("DELIMITER $$")
 cursor.exeute("""
 CREATE TRIGGER EnrollTrigger
 BEFORE INSERT ON Enrolled
@@ -297,6 +298,19 @@ BEGIN
     END IF;
 END$$
 """)
+cursor.execute("DELIMITER ;")
+
+cursor.execute("DELIMITER $$")
+cursor.execute("""
+CREATE TRIGGER StudentUsername BEFORE INSERT ON Student FOR EACH ROW BEGIN IF NEW.username IN (SELECT I.username FROM Instructor I) THEN signal sqlstate '45000'; END IF; END$$
+""")
+cursor.execute("DELIMITER ;")
+
+cursor.execute("DELIMITER $$")
+cursor.execute("""
+CREATE TRIGGER InstructorUsername BEFORE INSERT ON Instructor FOR EACH ROW BEGIN IF NEW.username IN (SELECT S.username FROM Student S) THEN signal sqlstate '45000'; END IF; END$$
+""")
+cursor.execute("DELIMITER ;")
 
 connection.commit()
 
