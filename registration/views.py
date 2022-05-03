@@ -4,6 +4,7 @@ from .forms import *
 from .db_utils import run_statement
 import mysql.connector
 import environ
+import hashlib
 
 env = environ.Env()
 environ.Env.read_env()
@@ -58,7 +59,8 @@ def managerLogin(req):
 
     #Retrieve data from the request body
     username=req.POST["username"]
-    password=req.POST["password"]
+    passwordstr=req.POST["password"]
+    password=hashlib.sha256(passwordstr.encode()).hexdigest()
 
     cursor.execute(f"SELECT * FROM Database_manager WHERE username='{username}' and password='{password}';") #Run the query in DB
 
@@ -76,7 +78,8 @@ def studentLogin(req):
     
     #Retrieve data from the request body
     username=req.POST["username"]
-    password=req.POST["password"]
+    passwordstr=req.POST["password"]
+    password=hashlib.sha256(passwordstr.encode()).hexdigest()
 
     cursor.execute(f"SELECT * FROM Student WHERE username='{username}' and password='{password}';") #Run the query in DB
 
@@ -94,7 +97,8 @@ def instructorLogin(req):
     
     #Retrieve data from the request body
     username=req.POST["username"]
-    password=req.POST["password"]
+    passwordstr=req.POST["password"]
+    password=hashlib.sha256(passwordstr.encode()).hexdigest()
     
     cursor.execute(f"SELECT * FROM Instructor WHERE username='{username}' and password='{password}';") #Run the query in DB
 
@@ -143,7 +147,8 @@ def addStudent(req):
 
     logged_user=req.session["username"]
     username=req.POST["username"]
-    password=req.POST["password"]
+    passwordstr=req.POST["password"]
+    password=hashlib.sha256(passwordstr.encode()).hexdigest()
     student_id=req.POST["student_id"]
     name=req.POST["name"]
     surname=req.POST["surname"]
@@ -172,7 +177,8 @@ def addInstructor(req):
 
     logged_user=req.session["username"]
     username=req.POST["username"]
-    password=req.POST["password"]
+    passwordstr=req.POST["password"]
+    password=hashlib.sha256(passwordstr.encode()).hexdigest()
     title=req.POST["title"]
     name=req.POST["name"]
     surname=req.POST["surname"]

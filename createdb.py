@@ -62,7 +62,8 @@ name varchar(200) NOT NULL,
 surname varchar(200) NOT NULL,
 email varchar(200) NOT NULL,
 PRIMARY KEY(username),
-FOREIGN KEY(department_id) REFERENCES Department(department_id)
+FOREIGN KEY(department_id) REFERENCES Department(department_id),
+CHECK(title = 'Assistant Professor' OR title = 'Associate Professor' OR title = 'Professor')
 );
 """)
 
@@ -166,11 +167,21 @@ FOREIGN KEY(classroom_id, slot) REFERENCES Plan(classroom_id, slot)
 );
 """)
 
+cursor.execute("INSERT INTO Time_slot values(1);")
+cursor.execute("INSERT INTO Time_slot values(2);")
+cursor.execute("INSERT INTO Time_slot values(3);")
+cursor.execute("INSERT INTO Time_slot values(4);")
+cursor.execute("INSERT INTO Time_slot values(5);")
+cursor.execute("INSERT INTO Time_slot values(6);")
+cursor.execute("INSERT INTO Time_slot values(7);")
+cursor.execute("INSERT INTO Time_slot values(8);")
+cursor.execute("INSERT INTO Time_slot values(9);")
+cursor.execute("INSERT INTO Time_slot values(10);")
+
 connection.commit()
 
 #Create triggers
 
-cursor.execute("DELIMITER $$")
 cursor.execute("""
 CREATE TRIGGER GradeTrigger 
 AFTER INSERT ON Grade 
@@ -186,11 +197,10 @@ C.course_id = NEW.course_id;
 
 UPDATE Student SET gpa = (gpa*completed_credits + NEW.grade*credits_taken)/(completed_credits + credits_taken), completed_credits = completed_credits + credits_taken 
 WHERE student_id = NEW.student_id; 
-END$$
+END;
 """)
-cursor.execute("DELIMITER ;")
 
-cursor.execute("DELIMITER $$")
+
 cursor.execute("""
 CREATE TRIGGER ScheduleTrigger 
 BEFORE INSERT ON Schedule 
@@ -223,11 +233,9 @@ signal sqlstate '45000';
 
 END IF; 
 
-END$$
+END;
 """)
-cursor.execute("DELIMITER ;")
 
-cursor.execute("DELIMITER $$")
 cursor.execute("""
 CREATE TRIGGER FourManagers
 BEFORE INSERT ON Database_manager
@@ -246,12 +254,10 @@ signal sqlstate '45000';
 
 END IF;
 
-END$$
+END;
 """)
-cursor.execute("DELIMITER ;")
 
-cursor.execute("DELIMITER $$")
-cursor.exeute("""
+cursor.execute("""
 CREATE TRIGGER EnrollTrigger
 BEFORE INSERT ON Enrolled
 FOR EACH ROW
@@ -261,6 +267,12 @@ BEGIN
     DECLARE is_enrolled INT unsigned DEFAULT 0;
     DECLARE course_quota INT unsigned DEFAULT 0;
     DECLARE enrolled_students INT unsigned DEFAULT 0;
+    DECLARE took_before INT unsigned DEFAULT 0;
+
+    SELECT COUNT(*)
+    INTO took_before
+    FROM Grade G
+    WHERE G.student_id = NEW.student_id AND G.course_id = NEW.course_id;
 
 
     SELECT COUNT(*)
@@ -292,31 +304,28 @@ BEGIN
     FROM Course C
     WHERE C.course_id = NEW.course_id;
 
-    IF taken_prerequisites != prerequisite_count OR enrolled_students >= course_quota THEN
+    IF taken_prerequisites != prerequisite_count 
+    OR enrolled_students >= course_quota 
+    OR took_before > 0 
+    THEN
 
     signal sqlstate '45000';
     END IF;
-END$$
+END;
 """)
-cursor.execute("DELIMITER ;")
 
-cursor.execute("DELIMITER $$")
 cursor.execute("""
-CREATE TRIGGER StudentUsername BEFORE INSERT ON Student FOR EACH ROW BEGIN IF NEW.username IN (SELECT I.username FROM Instructor I) THEN signal sqlstate '45000'; END IF; END$$
+CREATE TRIGGER StudentUsername BEFORE INSERT ON Student FOR EACH ROW BEGIN IF NEW.username IN (SELECT I.username FROM Instructor I) THEN signal sqlstate '45000'; END IF; END;
 """)
-cursor.execute("DELIMITER ;")
 
-cursor.execute("DELIMITER $$")
 cursor.execute("""
-CREATE TRIGGER InstructorUsername BEFORE INSERT ON Instructor FOR EACH ROW BEGIN IF NEW.username IN (SELECT S.username FROM Student S) THEN signal sqlstate '45000'; END IF; END$$
+CREATE TRIGGER InstructorUsername BEFORE INSERT ON Instructor FOR EACH ROW BEGIN IF NEW.username IN (SELECT S.username FROM Student S) THEN signal sqlstate '45000'; END IF; END;
 """)
-cursor.execute("DELIMITER ;")
 
 connection.commit()
 
 #Create stored procedure
 
-cursor.execute("DELIMITER $$")
 cursor.execute("""
 CREATE PROCEDURE FilterCourses(IN dep_id VARCHAR(200), IN cmps VARCHAR(200),
 IN min_credits INT, IN max_credits INT)
@@ -331,8 +340,7 @@ BEGIN
     WHERE I.department_id = dep_id AND R.campus = cmps 
         AND C.credits >= min_credits AND C.credits <= max_credits
     GROUP BY C.course_id;
-END $$
+END;
 """)
-cursor.execute("DELIMITER ;")
 
 connection.commit()
